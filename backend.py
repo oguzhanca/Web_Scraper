@@ -2,13 +2,17 @@ import sqlite3
 import requests, re
 from bs4 import BeautifulSoup
 
-def sValue():
-    global s_val
-    if s_val < S_max:
-        s_val += 20
 
-    print("S Value: ", s_val)
-    return s_val
+
+
+
+# def sValue():
+#     global s_val
+#     if s_val < S_max:
+#         s_val += 20
+#
+#     print("S Value: ", s_val)
+#     return s_val
 
 def requestPage(base_URL):
     global S_max
@@ -20,9 +24,9 @@ def requestPage(base_URL):
 
     soup=BeautifulSoup(c,"html.parser")
 
-    """Find number of results found"""
+    # """Find number of results found"""
     totalResult_num = int(soup.find("div",{"class":"results-label"}).get("data-count"))
-
+    
     l=[]
     S_max = totalResult_num // 20
     print(S_max)
@@ -40,11 +44,7 @@ def requestPage(base_URL):
 
     print(l)
     print(len(l))
-    # all=soup.find_all("div",{"class":"property-card-primary-info"})
-    # print("LENGTH OF LIST IS::: ", len(all))
-    # prop_count = len(all)
-    #
-    # print("first item's price: ", all[0].find("a",{"class":"listing-price"}).text.strip())
+
     # print("last item's price: ", all[-1].find("a",{"class":"listing-price"}).text.strip())
 
     #page_nr=soup.find_all("a",{"class":"Page"})[-1].text

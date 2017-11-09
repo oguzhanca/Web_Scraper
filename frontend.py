@@ -1,33 +1,80 @@
 from tkinter import *
 from tkinter import messagebox
-import backend
+from tkinter import ttk
+import backend, threading
+from multiprocessing import Queue
+import time
+
+queue = Queue()
+def foo():
+    print("Beginning of foo")
+    b1.config(state=DISABLED, text="downloading..")
+    # Do time consuming stuff here.
+    backend.requestPage(title_text.get())
+    b1.config(state=NORMAL, text="Start")
+    queue.put([88,90]) #Just if I need this later.
+    print("End of foo")
 
 
+# Function to check state of thread1 and to update progressbar #
+def progress(thread, queue):
+    print("progrese girdi")
+    # starts thread #
+    thread.start()
+
+    # defines indeterminate progress bar (used while thread is alive) #
+    print("Here is after 'thread start()'")
+
+    pb1 = ttk.Progressbar(window, orient='horizontal', mode='indeterminate')
+
+    # defines determinate progress bar (used when thread is dead) #
+    pb2 = ttk.Progressbar(window, orient='horizontal', mode='determinate')
+    pb2['value'] = 100
+
+    # places and starts progress bar #
+    pb1.grid(row=14, pady=3, columnspan=50)
+
+    pb1.start()
+
+    # checks whether thread is alive #
+    while thread.is_alive():
+        window.update()
+        pass
+
+    # once thread is no longer active, remove pb1 and place the '100%' progress bar #
+    pb1.destroy()
+    pb2.grid(row=14, pady=3, columnspan=50)
+
+    # retrieves object from queue #
+    work = queue.get()
+    print("Leaving 'progress' function ", work)
+    return work
 
 def getUrlFromTextBar():
     if title_text.get() != "":
         global url
         url = title_text.get()
         printText()
-        backend.requestPage(url)
+        # Create thread object, targeting function to do 'stuff' #
+        thread1 = threading.Thread(target=foo, args=())
+        #thread2 = threading.Thread(target=changeFrame, args=())
+        print("Thread1 created, progress about to be created")
+        work = progress(thread1, queue)
+        print("Finished all")
 
     else:
         messagebox.showwarning("", "This URL is not valid!!")
 
 
 def printText(): #For testing purposes!!
-    list1.insert(END, "Ifin ici: " + url)
-
-def changeFrame():
-    #fr = Frame()
-	print("hello_world")
+    list1.insert(END, url)
 
 def donothing():
-    filewin = Toplevel(window)
-    filewin.geometry("150x150")
-    button = Button(filewin, text="Do nothing button")#, command=changeFrame)
-    button.pack()
-
+    #     filewin = Toplevel(window)
+    #     filewin.geometry("150x150")
+    # button = Button(filewin, text="Do nothing button")#, command=changeFrame)
+    # button.pack()
+    return
 window=Tk()
 
 ################################################################################
@@ -63,7 +110,7 @@ window.config(menu=menubar)
 ################################################################################
 
 window.wm_title("Data Scrapper")
-window.geometry("700x400")
+window.geometry("750x450")
 window.resizable(width=False, height=False)
 window.configure(background='#44b5ea')
 
