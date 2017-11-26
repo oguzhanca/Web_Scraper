@@ -51,6 +51,11 @@ def progress(thread, queue):
     return work
 
 def getUrlFromTextBar():
+    # list1.insert(END, "\nExtracting data and creating table..")
+    # list1.insert(END, "\nTotal number of properties found: 243")
+    # list1.insert(END, "\nTime elapsed: 9.62 sec")
+    # list1.insert(END, "\nYour data is ready to save!")
+    # list1.insert(END, "\nClick on 'Save as' and choose a format to import to your device")
     if title_text.get() != "":
         global url
         url = title_text.get()

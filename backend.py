@@ -33,7 +33,7 @@ def requestPage(base_URL):
     print("Number of total results: ", totalResult_num)
     print("S_max is: ", S_max)
 
-    for page in range(0,40,20):# S_max*20, 20):
+    for page in range(0,20,20):# S_max*20, 20):
         newUrl = base_URL + "?s=" + str(page) + "&o=listingdate-desc"
         r = requests.get(newUrl)
         c = r.content
@@ -48,10 +48,22 @@ def requestPage(base_URL):
                 d["City"]=item.find("div",{"class":"property-city"}).text.strip()
             except:
                 d["City"]=None
-            # try:
-            #     d["City"]=item.find("div",{"class":"property-address"}).text.strip()
-            # except:
-            #     d["City"]=None
+            try:
+                d["Beds"]=item.find("div",{"class":"property-beds"}).text.replace("beds", "").strip()
+            except:
+                d["Beds"]=None
+            try:
+                d["Full Baths"]=item.find("div",{"class":"property-baths"}).text.strip()[0]
+            except:
+                d["Full Baths"]=None
+            try:
+                d["Half Baths"]=item.find("div",{"class":"property-half-baths"}).text.strip()[0]
+            except:
+                d["Half Baths"]=None
+            try:
+                d["Area (sq-feet)"]=item.find("div",{"class":"property-sqft"}).text.replace("sq. ft", "").strip()
+            except:
+                d["Area (sq-feet)"]=None
             l.append(d)
 
 
