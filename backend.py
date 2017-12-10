@@ -4,8 +4,42 @@ from bs4 import BeautifulSoup
 
 
 
+def requestPage_Emlakjet(base_URL):
+    global message2
 
+    if "emlakjet" not in base_URL:
+        message2 = "URL doesn't match the target website\nPlease check and try again!EJ"
+        return message2
 
+    r=requests.get(base_URL)
+    c=r.content
+
+    soup=BeautifulSoup(c,"html.parser")
+
+    Property_List = soup.find_all("a",{"class":"listing-url"})
+    for i in range (len(Property_List)):
+        print(i, "    ", str(Property_List[i].get("href")))
+
+    print("Length of array: ", len(Property_List))
+
+    Subdomain_list = []
+    for i in range (len(all)):
+        Subdomain_list.append(str(all[i].get("href")))
+        print(i, "    ", str(all[i].get("href")))
+    print(len(Subdomain_list))
+
+    data = []
+    for i in range (3):
+        req = requests.get("https://www.emlakjet.com" + Subdomain_list[i])
+        cont = req.content
+        soup=BeautifulSoup(cont,"html.parser")
+        soup
+        data.append(soup.find_all("div",{"class":"element"}))
+    print("Length: ", len(data))
+    print(data)
+
+    message2 = "emlakjet bitti"
+    return message2
 # def sValue():
 #     global s_val
 #     if s_val < S_max:
@@ -14,10 +48,16 @@ from bs4 import BeautifulSoup
 #     print("S Value: ", s_val)
 #     return s_val
 
-def requestPage(base_URL):
+def requestPage_Century(base_URL):
+    global message
     global S_max
     global totalResult_num
     global prop_count
+
+    if "century" not in base_URL:
+        message = "URL doesn't match the target website\nPlease check and try again!CENT"
+        return message
+
 
     r=requests.get(base_URL + "?s=0&o=listingdate-desc")
     c=r.content
@@ -70,6 +110,9 @@ def requestPage(base_URL):
 
     print(l)
     print("Length of array: ", len(l))
+
+    message = "Mission completed!"
+    return message
 
     # print("last item's price: ", all[-1].find("a",{"class":"listing-price"}).text.strip())
 
