@@ -4,6 +4,7 @@ from tkinter import ttk
 import backend, threading
 from multiprocessing import Queue
 import time
+import pandas as pd
 
 queue = Queue()
 website_to_extract = ""
@@ -11,23 +12,18 @@ def foo():
     print("Beginning of foo")
     b1.config(state=DISABLED, text="downloading..")
 
-
-
-    if website_to_extract == "century21":
+    if website_to_extract == "Century21":
         # Do time consuming stuff here.
         backend.requestPage_Century(title_text.get())
         list1.insert(END, backend.message)
 
-    elif website_to_extract == "emlakjet":
+    elif website_to_extract == "EmlakJet":
         backend.requestPage_Emlakjet(title_text.get())
         list1.insert(END, backend.message2)
     else:
         messagebox.showwarning("", "Else'te")
 
     b1.config(state=NORMAL, text="Fetch")
-
-
-
 
 
     queue.put([88,90]) #Just if I need this later.
@@ -61,11 +57,11 @@ def progress(thread, queue):
         window.update()
         pass
 
-    # once thread is no longer active, remove pb1 and place the '100%' progress bar #
+    # once thread is no longer active, remove pb1 and place the '100%' progress bar.
     pb1.destroy()
     pb2.grid(row=17, pady=6, columnspan=50)
 
-    # retrieves object from queue #
+    # retrieves object from queue.
     work = queue.get()
     print("Leaving 'progress' function ", work)
 
@@ -102,7 +98,8 @@ def printText(): #For testing purposes!!
 def websiteSelect(val, filewin):
     global website_to_extract
     website_to_extract = val
-    messagebox.showinfo("value: ", website_to_extract)
+    infoLabelText.set("You chose to extract data from: " + val)
+    #messagebox.showinfo("value: ", website_to_extract)
     filewin.wm_forget(filewin)
     return website_to_extract
 
@@ -113,12 +110,16 @@ def donothing():
     val = StringVar()
     val.set("Nothing Selected Yet")
 
-    Rb_EmlakJet = ttk.Radiobutton(master=filewin, text="Emlak Jet", value="emlakjet", variable=val)
-    Rb_Cent21 = ttk.Radiobutton(master=filewin, text="Century 21", value="century21", variable=val)
+    Rb_EmlakJet = ttk.Radiobutton(master=filewin, text="Emlak Jet", value="EmlakJet", variable=val)
+    Rb_Cent21 = ttk.Radiobutton(master=filewin, text="Century 21", value="Century21", variable=val)
     Rb_Cent21.grid(row=0, column=0, pady=5, padx=17)
     Rb_EmlakJet.grid(row=1, column=0, padx=10)
     OKButton = ttk.Button(filewin, text="Choose", command=lambda : websiteSelect(val.get(), filewin))
     OKButton.grid(row=2, column=0, pady=20)
+
+def SaveToCsv():
+    #df=pd.DataFrame(l)
+    return
 
 
 window=Tk()
@@ -137,7 +138,7 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 menubar.add_cascade(label="File", menu=filemenu)
 savemenu = Menu(menubar, tearoff=0)
-savemenu.add_command(label="csv file", command=donothing)
+savemenu.add_command(label="csv file", command=SaveToCsv)
 
 savemenu.add_separator()
 
@@ -155,7 +156,7 @@ menubar.add_cascade(label="Help", menu=helpmenu)
 window.config(menu=menubar)
 ################################################################################
 
-window.wm_title("Data Scrapper")
+window.wm_title("Data Scraper")
 window.geometry("750x450")
 window.resizable(width=False, height=False)
 window.configure(background='#44b5ea')
@@ -174,8 +175,7 @@ sb1=Scrollbar(window)
 sb1.grid(row=2,column=5,rowspan=12)
 
 infoLabelText = StringVar()
-infoLabelText = "Choose a website to fetch data!"
-Info_Label = ttk.Label(window, text=infoLabelText, background='#44b5ea', foreground='#ba0505')
+Info_Label = ttk.Label(window, textvariable=infoLabelText, background='#44b5ea', foreground='#ba0505')
 
 Info_Label.grid(row=14, column=1, pady=3)
 

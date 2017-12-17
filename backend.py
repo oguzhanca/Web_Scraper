@@ -16,27 +16,34 @@ def requestPage_Emlakjet(base_URL):
 
     soup=BeautifulSoup(c,"html.parser")
 
+    #Extract all rows of properties.
     Property_List = soup.find_all("a",{"class":"listing-url"})
     for i in range (len(Property_List)):
         print(i, "    ", str(Property_List[i].get("href")))
 
     print("Length of array: ", len(Property_List))
 
+    #Website holds all info in subdomains therefore get related 'href' from html.
     Subdomain_list = []
-    for i in range (len(all)):
-        Subdomain_list.append(str(all[i].get("href")))
-        print(i, "    ", str(all[i].get("href")))
+    for i in range (len(Property_List)):
+        Subdomain_list.append(str(Property_List[i].get("href")))
+        print(i, "    ", str(Property_List[i].get("href")))
     print(len(Subdomain_list))
 
-    data = []
-    for i in range (3):
+    EmlakJetData = []
+    for i in range (3):#len(Subdomain_list)): #Denemek icin 3 elemana baktım.
+        data={}
         req = requests.get("https://www.emlakjet.com" + Subdomain_list[i])
         cont = req.content
         soup=BeautifulSoup(cont,"html.parser")
-        soup
-        data.append(soup.find_all("div",{"class":"element"}))
-    print("Length: ", len(data))
-    print(data)
+
+        elements=soup.find_all("div",{"class":"element"})
+
+        for item in elements:
+            data[item.find_all("span")[0].get_text()] = item.find_all("span")[1].get_text()
+        EmlakJetData.append(data)
+
+    print(EmlakJetData, "\nLength of emlakjetdata list: ", len(EmlakJetData))
 
     message2 = "emlakjet bitti"
     return message2
