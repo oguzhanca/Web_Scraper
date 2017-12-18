@@ -1,7 +1,65 @@
 import sqlite3
 import requests, re
 from bs4 import BeautifulSoup
+import pandas as pd
 
+
+def SaveAsCsv(website):
+    if website == "EmlakJet":
+        try:
+            connex = sqlite3.connect("EmlakJet_Search_Results.db")
+            cur = connex.cursor()
+            df = pd.read_sql('SELECT * FROM Property_Features', connex)
+            df.to_csv("Emlakjet_CSV.csv")
+        except:
+            print("Error SAVING EmlakJet")
+
+    elif website == "Century21":
+        try:
+            connex = sqlite3.connect("Century21_Search_Results.db")
+            cur = connex.cursor()
+            df = pd.read_sql('SELECT * FROM Property_Features', connex)
+            df.to_csv("Century21_CSV.csv")
+        except:
+            print("Error SAVING Century21")
+
+def SaveAsJson(website):
+    if website == "EmlakJet":
+        try:
+            connex = sqlite3.connect("EmlakJet_Search_Results.db")
+            cur = connex.cursor()
+            df = pd.read_sql('SELECT * FROM Property_Features', connex)
+            df.to_json("Emlakjet_JSON.json")
+        except:
+            print("Error SAVING EmlakJet")
+
+    elif website == "Century21":
+        try:
+            connex = sqlite3.connect("Century21_Search_Results.db")
+            cur = connex.cursor()
+            df = pd.read_sql('SELECT * FROM Property_Features', connex)
+            df.to_json("Century21_JSON.json")
+        except:
+            print("Error SAVING Century21")
+
+def SaveAsExcel(website):
+    if website == "EmlakJet":
+        try:
+            connex = sqlite3.connect("EmlakJet_Search_Results.db")
+            cur = connex.cursor()
+            df = pd.read_sql('SELECT * FROM Property_Features', connex)
+            df.to_excel("Emlakjet_EXCEL.xlsx")
+        except:
+            print("Error SAVING EmlakJet")
+
+    elif website == "Century21":
+        try:
+            connex = sqlite3.connect("Century21_Search_Results.db")
+            cur = connex.cursor()
+            df = pd.read_sql('SELECT * FROM Property_Features', connex)
+            df.to_excel("Century21_EXCEL.xlsx")
+        except:
+            print("Error SAVING Century21")
 
 
 def requestPage_Emlakjet(base_URL):
@@ -31,7 +89,7 @@ def requestPage_Emlakjet(base_URL):
     print(len(Subdomain_list))
 
     EmlakJetData = []
-    for i in range (3):#len(Subdomain_list)): #Denemek icin 3 elemana baktım.
+    for i in range (len(Subdomain_list)): #Denemek icin 3 elemana baktım.
         data={}
         req = requests.get("https://www.emlakjet.com" + Subdomain_list[i])
         cont = req.content
@@ -44,6 +102,13 @@ def requestPage_Emlakjet(base_URL):
         EmlakJetData.append(data)
 
     print(EmlakJetData, "\nLength of emlakjetdata list: ", len(EmlakJetData))
+
+    df = pd.DataFrame(EmlakJetData)
+
+    connex = sqlite3.connect("EmlakJet_Search_Results.db")  # Opens file if exists, else creates file
+    cur = connex.cursor()  # This object lets us actually send messages to our DB and receive results
+
+    df.to_sql(name="Property_Features", con=connex, if_exists="replace", index=False)  #"name" is name of table
 
     message2 = "emlakjet bitti"
     return message2
@@ -117,6 +182,13 @@ def requestPage_Century(base_URL):
 
     print(l)
     print("Length of array: ", len(l))
+
+    df = pd.DataFrame(l)
+
+    connex = sqlite3.connect("Century21_Search_Results.db")  # Opens file if exists, else creates file
+    cur = connex.cursor()  # This object lets us actually send messages to our DB and receive results
+
+    df.to_sql(name="Property_Features", con=connex, if_exists="replace", index=False)  #"name" is name of table
 
     message = "Mission completed!"
     return message

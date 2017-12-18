@@ -4,7 +4,6 @@ from tkinter import ttk
 import backend, threading
 from multiprocessing import Queue
 import time
-import pandas as pd
 
 queue = Queue()
 website_to_extract = ""
@@ -117,12 +116,40 @@ def donothing():
     OKButton = ttk.Button(filewin, text="Choose", command=lambda : websiteSelect(val.get(), filewin))
     OKButton.grid(row=2, column=0, pady=20)
 
-def SaveToCsv():
-    #df=pd.DataFrame(l)
-    return
+def SaveManager(File_Format):
+
+    if website_to_extract == "EmlakJet":
+
+        if File_Format == "CSV":
+            backend.SaveAsCsv("EmlakJet")
+            list1.insert(END, "Data successfully saved in CSV format!")
+
+        elif File_Format == "JSON":
+            backend.SaveAsJson("EmlakJet")
+            list1.insert(END, "Data successfully saved in JSON format!")
+
+        elif File_Format == "EXCEL":
+            backend.SaveAsExcel("EmlakJet")
+            list1.insert(END, "Data successfully saved in EXCEL format!")
+
+    elif website_to_extract == "Century21":
+
+        if File_Format == "CSV":
+            backend.SaveAsCsv("Century21")
+            list1.insert(END, "Data successfully saved in CSV format!")
+
+        elif File_Format == "JSON":
+            backend.SaveAsJson("Century21")
+            list1.insert(END, "Data successfully saved in JSON format!")
+
+        elif File_Format == "EXCEL":
+            backend.SaveAsExcel("Century21")
+            list1.insert(END, "Data successfully saved in EXCEL format!")
+
 
 
 window=Tk()
+
 
 ################################################################################
 menubar = Menu(window,bg='#1877a3')
@@ -138,13 +165,13 @@ filemenu.add_separator()
 filemenu.add_command(label="Exit", command=window.quit)
 menubar.add_cascade(label="File", menu=filemenu)
 savemenu = Menu(menubar, tearoff=0)
-savemenu.add_command(label="csv file", command=SaveToCsv)
+savemenu.add_command(label="csv file", command=lambda : SaveManager("CSV"))
 
 savemenu.add_separator()
 
-savemenu.add_command(label="xlsx file", command=donothing)
-savemenu.add_command(label="database file", command=donothing)
-savemenu.add_command(label="json file", command=donothing)
+savemenu.add_command(label="xlsx file", command=lambda : SaveManager("EXCEL"))
+savemenu.add_command(label="json file", command=lambda : SaveManager("JSON"))
+savemenu.add_command(label="database file")
 
 menubar.add_cascade(label="Save As", menu=savemenu)
 helpmenu = Menu(menubar, tearoff=0)
