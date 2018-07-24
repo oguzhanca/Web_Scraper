@@ -1,5 +1,7 @@
 # Web_Scraper
 
+I have done this project as a side work during my bachelor studies. My intention in doing this project is to refresh my Python syntax knowledge, learn the basics of HTML, BeautifulSoup library for web scraping, and use of database.
+
 This program extracts information from a real estate agent website and put it into a table to make analyzing data easier and faster.
 
 What it basically does is;
