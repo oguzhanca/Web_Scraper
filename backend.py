@@ -66,13 +66,17 @@ def requestPage_Emlakjet(base_URL):
     global message2
 
     if "emlakjet" not in base_URL:
-        message2 = "URL doesn't match the target website\nPlease check and try again!EJ"
+        message2 = "URL doesn't match the target website. Please check and try again!"
         return message2
 
-    r=requests.get(base_URL)
-    c=r.content
+    try:
+        r=requests.get(base_URL)
+        c=r.content
 
-    soup=BeautifulSoup(c,"html.parser")
+        soup=BeautifulSoup(c,"html.parser")
+    except:
+        message2 = "Error loading page!"
+        return message2
 
     #Extract all rows of properties.
     Property_List = soup.find_all("a",{"class":"listing-url"})
@@ -105,20 +109,17 @@ def requestPage_Emlakjet(base_URL):
 
     df = pd.DataFrame(EmlakJetData)
 
-    connex = sqlite3.connect("EmlakJet_Search_Results.db")  # Opens file if exists, else creates file
-    cur = connex.cursor()  # This object lets us actually send messages to our DB and receive results
+    try:
+        connex = sqlite3.connect("EmlakJet_Search_Results.db")  # Opens file if exists, else creates file
+        cur = connex.cursor()  # This object lets us actually send messages to our DB and receive results
 
-    df.to_sql(name="Property_Features", con=connex, if_exists="replace", index=False)  #"name" is name of table
+        df.to_sql(name="Property_Features", con=connex, if_exists="replace", index=False)  #"name" is name of table
+    except:
+        message2 = "Error connecting to database!"
 
-    message2 = "emlakjet bitti"
+
+    message2 = "Extraction completed!"
     return message2
-# def sValue():
-#     global s_val
-#     if s_val < S_max:
-#         s_val += 20
-#
-#     print("S Value: ", s_val)
-#     return s_val
 
 def requestPage_Century(base_URL):
     global message
@@ -127,14 +128,19 @@ def requestPage_Century(base_URL):
     global prop_count
 
     if "century" not in base_URL:
-        message = "URL doesn't match the target website\nPlease check and try again!CENT"
+        message = "URL doesn't match the target website. Please check and try again!CENT"
         return message
 
 
-    r=requests.get(base_URL + "?s=0&o=listingdate-desc")
-    c=r.content
+    try:
+        r=requests.get(base_URL + "?s=0&o=listingdate-desc")
+        c=r.content
 
-    soup=BeautifulSoup(c,"html.parser")
+        soup=BeautifulSoup(c,"html.parser")
+    except:
+        message = "Error loading the webpage!"
+        return message
+
 
     # """Find number of results found"""
     totalResult_num = int(soup.find("div",{"class":"results-label"}).get("data-count"))
@@ -185,15 +191,14 @@ def requestPage_Century(base_URL):
 
     df = pd.DataFrame(l)
 
-    connex = sqlite3.connect("Century21_Search_Results.db")  # Opens file if exists, else creates file
-    cur = connex.cursor()  # This object lets us actually send messages to our DB and receive results
+    try:
+        connex = sqlite3.connect("Century21_Search_Results.db")  # Opens file if exists, else creates file
+        cur = connex.cursor()  # This object lets us actually send messages to our DB and receive results
 
-    df.to_sql(name="Property_Features", con=connex, if_exists="replace", index=False)  #"name" is name of table
+        df.to_sql(name="Property_Features", con=connex, if_exists="replace", index=False)  #"name" is name of table
+    except:
+        message = "Error connecting to the database!"
 
-    message = "Mission completed!"
+
+    message = "Extraction completed!"
     return message
-
-    # print("last item's price: ", all[-1].find("a",{"class":"listing-price"}).text.strip())
-
-    #page_nr=soup.find_all("a",{"class":"Page"})[-1].text
-    #print(page_nr,"number of pages were found")

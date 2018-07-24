@@ -20,25 +20,25 @@ def foo():
         backend.requestPage_Emlakjet(title_text.get())
         list1.insert(END, backend.message2)
     else:
-        messagebox.showwarning("", "Else'te")
+        list1.insert(END, "Source not selected! Please choose a website from Options menu")
 
     b1.config(state=NORMAL, text="Fetch")
 
 
     queue.put([88,90]) #Just if I need this later.
-    print("End of foo")
+    #print("End of foo")
 
 
 
 # Function to check state of thread1 and to update progressbar #
 def progress(thread, queue):
-    print("progrese girdi")
+    #print("progrese girdi")
     # starts thread #
 
     thread.start()
 
     # defines indeterminate progress bar (used while thread is alive) #
-    print("Here is after 'thread start()'")
+    #print("Here is after 'thread start()'")
 
     pb1 = ttk.Progressbar(window, orient='horizontal', mode='indeterminate')
 
@@ -62,7 +62,7 @@ def progress(thread, queue):
 
     # retrieves object from queue.
     work = queue.get()
-    print("Leaving 'progress' function ", work)
+    #print("Leaving 'progress' function ", work)
 
 
     return work
@@ -102,7 +102,22 @@ def websiteSelect(val, filewin):
     filewin.wm_forget(filewin)
     return website_to_extract
 
+def Save():
+    if title_text.get() == "":
+        messagebox.showwarning("", "You did not make any search!")
+    else:
+        messagebox.showinfo("", "Data is saved!")
+
+def New():
+    list1.delete(0, END)
+
+def About():
+    messagebox.showinfo("", " This is a program that extracts property data automatically and put them into a table to enable clearer judgement and to save time.")
+
 def donothing():
+    return
+
+def Options():
     filewin = Toplevel(window)
     filewin.geometry("150x150")
     #button = Button(filewin, text="Do nothing button")#, command=changeFrame)
@@ -154,11 +169,10 @@ window=Tk()
 ################################################################################
 menubar = Menu(window,bg='#1877a3')
 filemenu = Menu(menubar, tearoff=0)
-filemenu.add_command(label="New", command=donothing)
-filemenu.add_command(label="Options", command=donothing)
-filemenu.add_command(label="Save", command=donothing)
-filemenu.add_command(label="Save as...", command=donothing)
-filemenu.add_command(label="Close", command=donothing)
+filemenu.add_command(label="New", command=New)
+filemenu.add_command(label="Options", command=Options)
+filemenu.add_command(label="Save", command=Save)
+filemenu.add_command(label="Close", command=window.quit)
 
 filemenu.add_separator()
 
@@ -175,8 +189,7 @@ savemenu.add_command(label="database file")
 
 menubar.add_cascade(label="Save As", menu=savemenu)
 helpmenu = Menu(menubar, tearoff=0)
-helpmenu.add_command(label="Help Index", command=donothing)
-helpmenu.add_command(label="About...", command=donothing)
+helpmenu.add_command(label="About...", command=About)
 menubar.add_cascade(label="Help", menu=helpmenu)
 
 
